@@ -1,0 +1,5 @@
+name: Droptica Drush Command Pack
+description: Provide useful custom drush commands
+package: Drush Commands
+type: module
+core: 8.x
