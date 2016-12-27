@@ -19,12 +19,28 @@ function d_drush_command_pack_drush_command() {
     ],
   ];
 
+  $commands['delete-node-alias'] = [
+    'description' => 'Delete an node alias',
+    'aliases' => ['dna'],
+    'arguments' => [
+      'source' => 'Delete by source',
+      'alias' => 'Delete by alias',
+    ],
+    'options' => [
+      'name' => 'Name of source or alias',
+    ],
+    'examples' => [
+      'drush dna source /node/1' => 'Delete an alias by source path',
+      'drush dna alias /path-alias-name' => 'Delete an alias by alias path name',
+    ],
+  ];
+
   return $commands;
 }
 
 /**
- * Drush command logic.
- * drush_[MODULE_NAME]_[COMMAND_NAME]().
+ * Drush command logic for rebuilding file cache.
+ *
  */
 function drush_d_drush_command_pack_rebuild_aggregate_file($arg = NULL) {
   $tokens = ['@arg' => $arg];
@@ -47,5 +63,26 @@ function drush_d_drush_command_pack_rebuild_aggregate_file($arg = NULL) {
       break;
     default:
       drush_print(dt('Wrong argument. Possible arguments: js, css or use command without argument.'));
+  }
+}
+
+/**
+ * Drush command logic for deleting aliases
+ *
+ */
+function drush_d_drush_command_pack_delete_node_alias($arg = NULL, $opt = NULL) {
+  $tokens = ['@arg' => $arg, '@opt' => $opt];
+
+  switch ($arg) {
+    case 'alias':
+    case 'source':
+      $condition = [$arg => $opt];
+      \Drupal::service('path.alias_storage')
+        ->delete($condition);
+      drush_print(dt('Alias @opt deleted', $tokens));
+      break;
+
+    default:
+      drush_print(dt('Wrong argument and options. Example use: drush dna source /node/1'));
   }
 }
